@@ -25,6 +25,8 @@ export default function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
+  // Remove or comment out this useEffect to prevent loading from localStorage
+  /*
   useEffect(() => {
     const savedMessages = localStorage.getItem('chatMessages');
     if (savedMessages) {
@@ -35,6 +37,7 @@ export default function ChatPage() {
   useEffect(() => {
     localStorage.setItem('chatMessages', JSON.stringify(messages));
   }, [messages]);
+  */
 
   const handleSubmit = async (message: string) => {
     try {
