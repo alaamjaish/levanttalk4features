@@ -12,10 +12,10 @@ export interface Video {
 export const videos: Video[] = [
   {
     id: 1,
-    title: 'Essential Syrian Arabic Greetings',
-    description: 'Learn the most common greetings and expressions used in everyday Syrian conversations.',
+    title: 'At the Airport',
+    description: 'Learn the most common greetings and expressions used in traveling in via airport.',
     thumbnailUrl: 'https://i3.ytimg.com/vi/Z6oqmST_YMk/maxresdefault.jpg',
-    videoUrl: 'https://www.youtube.com/watch?v=Z6oqmST_YMk',
+    videoUrl: 'https://www.youtube.com/watch?v=DlL1KwykyWY&list=PLinwu5ztdferVMQVc0NCoOUS4wSCeQm-e&ab_channel=LearnArabicwithRazan-SyrianDialect',
     level: 'beginner',
     duration: '8:24',
     topics: ['greetings', 'introductions', 'daily expressions']
