@@ -33,6 +33,9 @@ const Navbar = () => {
             <Link href="/flashcards" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400">
               Flashcards
             </Link>
+            <Link href="/articles" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400">
+              Articles & Stories
+            </Link>
             <button
               onClick={toggleDarkMode}
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -94,6 +97,13 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Flashcards
+              </Link>
+              <Link 
+                href="/articles" 
+                className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 px-4 py-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Articles & Stories
               </Link>
             </div>
           </div>

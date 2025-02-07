@@ -2518,5 +2518,3 @@ export const flashcardDecks = {
   
   
 }; 
-
-
