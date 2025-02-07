@@ -14,7 +14,7 @@ export const videos: Video[] = [
     id: 1,
     title: 'At the Airport',
     description: 'Learn the most common greetings and expressions used in traveling in via airport.',
-    thumbnailUrl: '  https://www.google.com/url?sa=i&url=https%3A%2F%2Funsplash.com%2Fs%2Fphotos%2Fairport&psig=AOvVaw2PkrrOkw_xP93u3V7i_Qx6&ust=1738997602033000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCICMwYX9sIsDFQAAAAAdAAAAABAJ',
+    thumbnailUrl: ' https://unsplash.com/photos/aerial-photography-of-airliner-rf6ywHVkrlY',
     videoUrl: 'https://www.youtube.com/watch?v=DlL1KwykyWY&list=PLinwu5ztdferVMQVc0NCoOUS4wSCeQm-e&ab_channel=LearnArabicwithRazan-SyrianDialect',
     level: 'beginner',
     duration: '8:24',
