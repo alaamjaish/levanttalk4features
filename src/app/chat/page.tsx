@@ -60,6 +60,8 @@ export default function ChatPage() {
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
       console.error('Error:', error);
+      // Add error handling UI feedback here
+      alert('Failed to get response. Please try again.');
     } finally {
       setIsLoading(false);
     }

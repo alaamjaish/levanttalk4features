@@ -23,12 +23,15 @@ export const generateChatResponse = async (messages: ChatMessage[]): Promise<{ a
     });
 
     if (!response.ok) {
+      const errorData = await response.json();
+      console.error('API Error:', errorData);
       throw new Error('Failed to generate response');
     }
 
     const data = await response.json();
-    const responseContent = data.content;
+    console.log('API Response:', data); // Add this for debugging
 
+    const responseContent = data.content;
     const [arabicText, translation] = responseContent.split('\n').filter((line: string) => line.trim());
 
     return {

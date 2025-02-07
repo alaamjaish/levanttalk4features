@@ -7,6 +7,7 @@ const openai = new OpenAI({
 
 export async function POST(req: Request) {
   if (!process.env.OPENAI_API_KEY) {
+    console.error('OpenAI API key not configured');
     return NextResponse.json(
       { error: 'OpenAI API key not configured' }, 
       { status: 500 }
@@ -15,6 +16,7 @@ export async function POST(req: Request) {
 
   try {
     const { messages } = await req.json();
+    console.log('Received messages:', messages);
     
     const completion = await openai.chat.completions.create({
       model: "gpt-4",
@@ -34,6 +36,7 @@ export async function POST(req: Request) {
       max_tokens: 200,
     });
 
+    console.log('OpenAI response:', completion.choices[0].message);
     return NextResponse.json(completion.choices[0].message);
   } catch (error) {
     console.error('Error:', error);
