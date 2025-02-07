@@ -21,7 +21,7 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           <FeatureCard
             title="AI Chatbot"
-            description="Practice conversations with our GPT-4 powered assistant. Get instant feedback and explanations."
+            description="Practice conversations with our the latest AI powered assistant. Get instant feedback and explanations."
             icon={<FaRobot className="w-full h-full" />}
           />
           <FeatureCard
@@ -31,7 +31,7 @@ export default function Home() {
           />
           <FeatureCard
             title="Flashcards"
-            description="Coming Soon: Build your vocabulary with our smart flashcard system."
+            description="Build your vocabulary with our smart flashcard system."
             icon={<FaLayerGroup className="w-full h-full" />}
           />
         </div>
