@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local development only, never committed
+.env.local
+
+# Example values, safe to commit
+.env
+
+# Docker build instructions, safe to commit
+.dockerignore
