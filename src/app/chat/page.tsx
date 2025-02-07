@@ -10,7 +10,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<OpenAIApiMessage[]>([
     {
       role: 'assistant',
-      content: "مرحبا! أنا مساعدك في تعلم اللغة العربية. كيف يمكنني مساعدتك اليوم؟\nHello! I'm your Arabic learning assistant. How can I help you today?"
+      content: "هلا فيك! كيف بدي ساعدك اليوم؟\nHey there! How can I help you today?"
     }
   ]);
   const [input, setInput] = useState('');
@@ -25,7 +25,7 @@ export default function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
-  // Remove or comment out this useEffect to prevent loading from localStorage
+  // Remove localStorage to start fresh on refresh
   /*
   useEffect(() => {
     const savedMessages = localStorage.getItem('chatMessages');
@@ -49,7 +49,7 @@ export default function ChatPage() {
       };
       setMessages(prev => [...prev, userMessage]);
 
-      // Get AI response
+      // Get AI response - pass the entire message history
       const response = await generateChatResponse([...messages, userMessage]);
       
       // Add AI response
@@ -60,7 +60,6 @@ export default function ChatPage() {
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
       console.error('Error:', error);
-      // Add error handling UI feedback here
       alert('Failed to get response. Please try again.');
     } finally {
       setIsLoading(false);
