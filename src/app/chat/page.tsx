@@ -42,22 +42,14 @@ export default function ChatPage() {
   const handleSubmit = async (message: string) => {
     try {
       setIsLoading(true);
-      // Add user message
       const userMessage: OpenAIApiMessage = {
         role: 'user',
         content: message
       };
       setMessages(prev => [...prev, userMessage]);
 
-      // Get AI response - pass the entire message history
       const response = await generateChatResponse([...messages, userMessage]);
-      
-      // Add AI response
-      const aiMessage: OpenAIApiMessage = {
-        role: 'assistant',
-        content: `${response.arabicText}\n${response.translation}`
-      };
-      setMessages(prev => [...prev, aiMessage]);
+      setMessages(prev => [...prev, response]);
     } catch (error) {
       console.error('Error:', error);
       alert('Failed to get response. Please try again.');
