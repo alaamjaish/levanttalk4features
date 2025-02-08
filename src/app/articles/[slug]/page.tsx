@@ -1,51 +1,131 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { articles } from '@/data/articles';
 import Navbar from '@/components/layout/Navbar';
 import Link from 'next/link';
-import Image from 'next/image';
-import { FaClock, FaArrowLeft } from 'react-icons/fa';
+import { FaArrowLeft } from 'react-icons/fa';
+import './styles.css';
+
+interface Article {
+  slug: string;
+  title: string;
+  content: string;
+  type?: string;
+  level?: string;
+  topics?: string[];
+}
 
 export default function ArticlePage() {
-  const { slug } = useParams();
-  const article = articles.find(a => a.slug === slug || a.id === slug);
+  const params = useParams();
+  const [article, setArticle] = useState<Article | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!article) {
+  useEffect(() => {
+    async function loadArticle() {
+      if (!params.slug) return;
+
+      try {
+        setIsLoading(true);
+        setError(null);
+        const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
+        const response = await fetch(`/api/articles/${slug}`);
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            setError('Article not found');
+          } else {
+            setError('Failed to load article');
+          }
+          return;
+        }
+
+        const articleData = await response.json();
+        setArticle(articleData);
+      } catch (error) {
+        console.error('Error loading article:', error);
+        setError('Failed to load article. Please try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadArticle();
+  }, [params.slug]);
+
+  if (isLoading) {
     return (
-      <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar />
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <Link href="/articles" className="text-indigo-600 hover:text-indigo-800">
-            ← Back to Articles
+        <main className="container mx-auto px-4 py-8">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-2"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-4"></div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error || !article) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <Navbar />
+        <main className="container mx-auto px-4 py-8">
+          <Link
+            href="/articles"
+            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline mb-6"
+          >
+            <FaArrowLeft className="mr-2" /> Back to Articles
           </Link>
-          <h1 className="text-2xl font-bold mt-4">Article not found</h1>
-        </div>
-      </main>
+          <div className="text-center py-12">
+            <h1 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">
+              {error || 'Article not found'}
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Please try again later or go back to browse other articles.
+            </p>
+          </div>
+        </main>
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar />
-      <article className="max-w-4xl mx-auto px-4 py-8">
-        <Link href="/articles" className="text-indigo-600 hover:text-indigo-800">
-          ← Back to Articles
+      <main className="container mx-auto px-4 py-8 max-w-3xl">
+        <Link
+          href="/articles"
+          className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline mb-6"
+        >
+          <FaArrowLeft className="mr-2" /> Back to Articles
         </Link>
-        <div className="mt-8">
-          <h1 className="text-3xl font-bold mb-4">{article.title}</h1>
-          <div className="prose max-w-none">
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-2">Arabic Text:</h2>
-              <p className="text-lg" dir="rtl">{article.arabicText}</p>
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold mb-2">English Translation:</h2>
-              <p className="text-lg">{article.englishTranslation}</p>
-            </div>
+        
+        <article className="prose dark:prose-invert lg:prose-lg mx-auto">
+          <h1 className="mb-4 text-3xl font-bold">{article.title}</h1>
+          
+          <div className="flex gap-2 mb-6">
+            {article.type && (
+              <span className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm px-3 py-1 rounded-full">
+                {article.type}
+              </span>
+            )}
+            
+            {article.level && (
+              <span className="inline-block bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-sm px-3 py-1 rounded-full">
+                {article.level}
+              </span>
+            )}
           </div>
-        </div>
-      </article>
-    </main>
+          
+          <div 
+            className="mt-8 article-content"
+            dangerouslySetInnerHTML={{ __html: article.content }} 
+          />
+        </article>
+      </main>
+    </div>
   );
-} 
+}
