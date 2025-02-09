@@ -1,6 +1,6 @@
 import Navbar from '@/components/layout/Navbar';
 import FeatureCard from '@/components/home/FeatureCard';
-import { FaRobot, FaVideo, FaLayerGroup, FaBook } from 'react-icons/fa';
+import { FaRobot, FaVideo, FaLayerGroup, FaBook, FaQuestionCircle } from 'react-icons/fa';
 import Link from 'next/link';
 
 export default function Home() {
@@ -28,6 +28,12 @@ export default function Home() {
       description: "Read and learn from curated Syrian Arabic articles and stories with interactive tools.",
       icon: <FaBook className="w-full h-full" />,
       href: "/articles"
+    },
+    {
+      title: "Practice Tests",
+      description: "Test your Arabic knowledge with interactive quizzes and get instant feedback.",
+      icon: <FaQuestionCircle className="w-full h-full" />,
+      href: "/quizzes"
     }
   ];
 

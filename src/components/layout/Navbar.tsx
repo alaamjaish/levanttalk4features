@@ -24,17 +24,35 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/chat" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400">
+            <Link
+              href="/chat"
+              className="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium"
+            >
               AI Chatbot
             </Link>
-            <Link href="/videos" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400">
+            <Link
+              href="/videos"
+              className="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium"
+            >
               Video Library
             </Link>
-            <Link href="/flashcards" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400">
+            <Link
+              href="/flashcards"
+              className="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium"
+            >
               Flashcards
             </Link>
-            <Link href="/articles" className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400">
+            <Link
+              href="/articles"
+              className="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium"
+            >
               Articles & Stories
+            </Link>
+            <Link
+              href="/quizzes"
+              className="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 text-sm font-medium"
+            >
+              Practice Tests
             </Link>
             <button
               onClick={toggleDarkMode}
@@ -76,34 +94,41 @@ const Navbar = () => {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t dark:border-gray-700">
-            <div className="flex flex-col space-y-4">
-              <Link 
-                href="/chat" 
-                className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 px-4 py-2"
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              <Link
+                href="/chat"
+                className="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 block px-3 py-2 text-base font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 AI Chatbot
               </Link>
-              <Link 
-                href="/videos" 
-                className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 px-4 py-2"
+              <Link
+                href="/videos"
+                className="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 block px-3 py-2 text-base font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Video Library
               </Link>
-              <Link 
-                href="/flashcards" 
-                className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 px-4 py-2"
+              <Link
+                href="/flashcards"
+                className="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 block px-3 py-2 text-base font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Flashcards
               </Link>
-              <Link 
-                href="/articles" 
-                className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 px-4 py-2"
+              <Link
+                href="/articles"
+                className="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 block px-3 py-2 text-base font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Articles & Stories
+              </Link>
+              <Link
+                href="/quizzes"
+                className="text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 block px-3 py-2 text-base font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Practice Tests
               </Link>
             </div>
           </div>
