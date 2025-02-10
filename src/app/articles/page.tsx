@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import ArticleCard from '@/components/articles/ArticleCard';
-import { FaSearch } from 'react-icons/fa';
-import Navbar from '@/components/layout/Navbar';
 import { type Article } from '@/lib/articles.server';
+import Navbar from '@/components/layout/Navbar';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,20 +35,12 @@ function ArticlesPage() {
     fetchArticles();
   }, []);
 
-  // Separate articles by level
-  const beginnerArticles = articles.filter(article => article.level === 'beginner');
-  const intermediateArticles = articles.filter(article => article.level === 'intermediate');
-  const advancedArticles = articles.filter(article => article.level === 'advanced');
-  const unspecifiedLevelArticles = articles.filter(article => !article.level);
-
   // Filter articles based on search and level
-  const filterArticles = (articleList: Article[]) => {
-    return articleList.filter(article => {
+  const filterArticles = (articles: Article[]) => {
+    return articles.filter(article => {
       const matchesLevel = selectedLevel === 'all' || article.level === selectedLevel;
       const matchesSearch = searchQuery === '' || 
-        article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (article.topics && article.topics.some(topic => topic.toLowerCase().includes(searchQuery.toLowerCase())));
+        article.title.toLowerCase().includes(searchQuery.toLowerCase());
 
       return matchesLevel && matchesSearch;
     });
@@ -68,6 +59,8 @@ function ArticlesPage() {
     );
   }
 
+  const filteredArticles = filterArticles(articles);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -80,11 +73,10 @@ function ArticlesPage() {
         <div className="max-w-5xl mx-auto mb-8">
           {/* Search Bar */}
           <div className="relative mb-4">
-            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Search articles by title, content, or topics..."
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 
+              placeholder="Search articles..."
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 
                        bg-white text-gray-900
                        focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               value={searchQuery}
@@ -137,82 +129,19 @@ function ArticlesPage() {
           </div>
         </div>
 
-        <div className="space-y-16">
-          {/* Beginner Articles */}
-          {(selectedLevel === 'all' || selectedLevel === 'beginner') && filterArticles(beginnerArticles).length > 0 && (
-            <section>
-              <h2 className="text-2xl font-semibold mb-8 text-center text-gray-800">
-                Beginner Articles
-              </h2>
-              <div className="max-w-5xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filterArticles(beginnerArticles).map((article) => (
-                    <ArticleCard key={article.slug} article={article} />
-                  ))}
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* Intermediate Articles */}
-          {(selectedLevel === 'all' || selectedLevel === 'intermediate') && filterArticles(intermediateArticles).length > 0 && (
-            <section>
-              <h2 className="text-2xl font-semibold mb-8 text-center text-gray-800">
-                Intermediate Articles
-              </h2>
-              <div className="max-w-5xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filterArticles(intermediateArticles).map((article) => (
-                    <ArticleCard key={article.slug} article={article} />
-                  ))}
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* Advanced Articles */}
-          {(selectedLevel === 'all' || selectedLevel === 'advanced') && filterArticles(advancedArticles).length > 0 && (
-            <section>
-              <h2 className="text-2xl font-semibold mb-8 text-center text-gray-800">
-                Advanced Articles
-              </h2>
-              <div className="max-w-5xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filterArticles(advancedArticles).map((article) => (
-                    <ArticleCard key={article.slug} article={article} />
-                  ))}
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* Other Articles (without level) */}
-          {selectedLevel === 'all' && filterArticles(unspecifiedLevelArticles).length > 0 && (
-            <section>
-              <h2 className="text-2xl font-semibold mb-8 text-center text-gray-800">
-                Other Articles
-              </h2>
-              <div className="max-w-5xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filterArticles(unspecifiedLevelArticles).map((article) => (
-                    <ArticleCard key={article.slug} article={article} />
-                  ))}
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* No Results Message */}
-          {articles.length > 0 && !filterArticles(articles).length && (
-            <div className="text-center py-12">
-              <p className="text-gray-600">No articles found matching your criteria.</p>
+        {/* Articles Grid */}
+        <div className="max-w-5xl mx-auto">
+          {filteredArticles.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredArticles.map((article) => (
+                <ArticleCard key={article.slug} article={article} />
+              ))}
             </div>
-          )}
-
-          {/* Loading State */}
-          {isLoading && (
+          ) : (
             <div className="text-center py-12">
-              <p className="text-gray-600">Loading articles...</p>
+              <p className="text-gray-600">
+                {isLoading ? 'Loading articles...' : 'No articles found matching your criteria.'}
+              </p>
             </div>
           )}
         </div>

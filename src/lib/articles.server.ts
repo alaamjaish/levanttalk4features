@@ -7,10 +7,6 @@ const articlesDirectory = path.join(process.cwd(), 'content/articles');
 export interface Article {
   slug: string;
   title: string;
-  date: string;
-  content: string;
-  description: string;
-  topics?: string[];
   level?: 'beginner' | 'intermediate' | 'advanced';
 }
 
@@ -18,15 +14,11 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
   try {
     const fullPath = path.join(articlesDirectory, `${slug}.mdx`);
     const fileContents = await fs.readFile(fullPath, 'utf8');
-    const { data, content } = matter(fileContents);
+    const { data } = matter(fileContents);
 
     return {
       slug,
-      content,
       title: data.title,
-      date: data.date,
-      description: data.description,
-      topics: data.topics,
       level: data.level,
     };
   } catch (error) {
@@ -45,21 +37,17 @@ export async function getAllArticles(): Promise<Article[]> {
           const slug = file.replace(/\.mdx$/, '');
           const fullPath = path.join(articlesDirectory, file);
           const fileContents = await fs.readFile(fullPath, 'utf8');
-          const { data, content } = matter(fileContents);
+          const { data } = matter(fileContents);
 
           return {
             slug,
             title: data.title,
-            date: data.date,
-            description: data.description,
-            content,
-            topics: data.topics,
             level: data.level,
           };
         })
     );
 
-    return articles.sort((a, b) => (a.date > b.date ? -1 : 1));
+    return articles;
   } catch (error) {
     console.error('Error loading articles:', error);
     return [];
@@ -72,9 +60,6 @@ export async function searchArticles(query: string): Promise<Article[]> {
   
   return articles.filter(article => 
     article.title.toLowerCase().includes(searchQuery) ||
-    article.content.toLowerCase().includes(searchQuery) ||
-    article.description?.toLowerCase().includes(searchQuery) ||
-    article.topics?.some(topic => topic.toLowerCase().includes(searchQuery)) ||
     false
   );
 }
