@@ -7,6 +7,7 @@ const articlesDirectory = path.join(process.cwd(), 'content/articles');
 export interface Article {
   slug: string;
   title: string;
+  content: string;
   level?: 'beginner' | 'intermediate' | 'advanced';
 }
 
@@ -14,11 +15,12 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
   try {
     const fullPath = path.join(articlesDirectory, `${slug}.mdx`);
     const fileContents = await fs.readFile(fullPath, 'utf8');
-    const { data } = matter(fileContents);
+    const { data, content } = matter(fileContents);
 
     return {
       slug,
       title: data.title,
+      content,
       level: data.level,
     };
   } catch (error) {
@@ -37,11 +39,12 @@ export async function getAllArticles(): Promise<Article[]> {
           const slug = file.replace(/\.mdx$/, '');
           const fullPath = path.join(articlesDirectory, file);
           const fileContents = await fs.readFile(fullPath, 'utf8');
-          const { data } = matter(fileContents);
+          const { data, content } = matter(fileContents);
 
           return {
             slug,
             title: data.title,
+            content,
             level: data.level,
           };
         })
@@ -60,6 +63,6 @@ export async function searchArticles(query: string): Promise<Article[]> {
   
   return articles.filter(article => 
     article.title.toLowerCase().includes(searchQuery) ||
-    false
+    article.content.toLowerCase().includes(searchQuery)
   );
 }
