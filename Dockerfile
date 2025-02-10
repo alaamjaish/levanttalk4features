@@ -21,10 +21,8 @@ ENV NODE_ENV=production
 ENV CI=true
 ENV NEXT_LINT=false
 
-# Show more debug info
-RUN node --version
-RUN npm --version
-RUN npm run build --verbose
+# Build the application
+RUN npm run build
 
 FROM node:18-alpine AS runner
 WORKDIR /app
@@ -35,10 +33,14 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Copy necessary files from builder
 COPY --from=builder /app/public ./public
-
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/package.json ./package.json
+
+# Set permissions
+RUN chown -R nextjs:nodejs /app
 
 USER nextjs
 
@@ -47,4 +49,5 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
+# Use the standalone server.js file
 CMD ["node", "server.js"]
