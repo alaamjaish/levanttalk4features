@@ -1,40 +1,31 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { remark } from 'remark';
-import html from 'remark-html';
 
 const articlesDirectory = path.join(process.cwd(), 'content/articles');
 
-export interface Article {
+interface Article {
   slug: string;
   title: string;
+  date: string;
   content: string;
-  type?: string;
-  level?: string;
+  description: string;
   topics?: string[];
 }
 
-async function markdownToHtml(markdown: string) {
-  const result = await remark()
-    .use(html)
-    .process(markdown);
-  return result.toString();
-}
-
-export async function getArticleBySlug(slug: string) {
+export async function getArticleBySlug(slug: string): Promise<Article | null> {
   try {
     const fullPath = path.join(articlesDirectory, `${slug}.mdx`);
     const fileContents = await fs.readFile(fullPath, 'utf8');
     const { data, content } = matter(fileContents);
-    const contentHtml = await markdownToHtml(content);
 
     return {
       slug,
-      content: contentHtml,
+      content,
       title: data.title,
       date: data.date,
       description: data.description,
+      topics: data.topics,
     };
   } catch (error) {
     console.error(`Error loading article ${slug}:`, error);
@@ -42,7 +33,7 @@ export async function getArticleBySlug(slug: string) {
   }
 }
 
-export async function getAllArticles() {
+export async function getAllArticles(): Promise<Article[]> {
   try {
     const files = await fs.readdir(articlesDirectory);
     const articles = await Promise.all(
@@ -53,14 +44,14 @@ export async function getAllArticles() {
           const fullPath = path.join(articlesDirectory, file);
           const fileContents = await fs.readFile(fullPath, 'utf8');
           const { data, content } = matter(fileContents);
-          const contentHtml = await markdownToHtml(content);
 
           return {
             slug,
             title: data.title,
             date: data.date,
             description: data.description,
-            content: contentHtml,
+            content,
+            topics: data.topics,
           };
         })
     );
@@ -79,6 +70,8 @@ export async function searchArticles(query: string): Promise<Article[]> {
   return articles.filter(article => 
     article.title.toLowerCase().includes(searchQuery) ||
     article.content.toLowerCase().includes(searchQuery) ||
-    article.topics?.some(topic => topic.toLowerCase().includes(searchQuery))
+    article.description?.toLowerCase().includes(searchQuery) ||
+    article.topics?.some(topic => topic.toLowerCase().includes(searchQuery)) ||
+    false
   );
 }
