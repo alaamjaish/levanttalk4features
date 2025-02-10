@@ -2,17 +2,28 @@
 FROM node:18-alpine AS deps
 WORKDIR /app
 
+# Install additional dependencies needed for builds
+RUN apk add --no-cache libc6-compat python3 make g++
+
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --verbose
 
 FROM node:18-alpine AS builder
 WORKDIR /app
+
+# Copy node_modules and source
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Set build environment
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV CI=true
 
-RUN npm run build
+# Show more debug info
+RUN node --version
+RUN npm --version
+RUN npm run build --verbose
 
 FROM node:18-alpine AS runner
 WORKDIR /app

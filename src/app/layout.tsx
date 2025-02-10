@@ -3,7 +3,7 @@
 import './globals.css';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/context/ThemeContext';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: 'LevantTalk',
   description: 'Learn Levantine Arabic the fun way',
 };
-// dsf
+
 export default function RootLayout({
   children,
 }: {
