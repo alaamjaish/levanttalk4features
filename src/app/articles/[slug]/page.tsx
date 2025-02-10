@@ -1,5 +1,3 @@
-'use client';
-
 import { getArticleBySlug } from '@/lib/articles.server';
 import styles from '@/styles/articles.module.css';
 import { notFound } from 'next/navigation';
@@ -33,20 +31,21 @@ export default async function ArticlePage({ params }: Props) {
   const mdxSource = await serialize(article.content);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
       <main className="container mx-auto px-4 py-8">
         <Link
           href="/articles"
-          className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline mb-6"
+          className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6"
         >
-          <FaArrowLeft className="mr-2" /> Back to Articles
+          <FaArrowLeft className="mr-2" />
+          Back to Articles
         </Link>
 
-        <article className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+        <article className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm p-6">
           <header className="mb-8">
             <h1 className="text-4xl font-bold mb-4">{article.title}</h1>
-            <div className="flex items-center text-gray-600 dark:text-gray-400">
+            <div className="flex items-center text-gray-600">
               <time dateTime={article.date}>
                 {new Date(article.date).toLocaleDateString('en-US', {
                   year: 'numeric',
