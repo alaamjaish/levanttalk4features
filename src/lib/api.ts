@@ -3,6 +3,8 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { serializeMDX } from './mdx';
+import { remark } from 'remark';
+import html from 'remark-html';
 
 // This should be used in a Node.js context (Server Components, getStaticProps, etc.)
 const articlesDirectory = path.join(process.cwd(), 'content/articles');
