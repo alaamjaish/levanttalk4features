@@ -8,6 +8,7 @@ export interface Article {
   slug: string;
   title: string;
   content: string;
+  date: string;
   level?: 'beginner' | 'intermediate' | 'advanced';
 }
 
@@ -21,6 +22,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
       slug,
       title: data.title,
       content,
+      date: data.date,
       level: data.level,
     };
   } catch (error) {
@@ -45,6 +47,7 @@ export async function getAllArticles(): Promise<Article[]> {
             slug,
             title: data.title,
             content,
+            date: data.date,
             level: data.level,
           };
         })

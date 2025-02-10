@@ -1,19 +1,7 @@
 import { getArticleBySlug } from '@/lib/articles.server';
-import styles from '@/styles/articles.module.css';
-import { notFound } from 'next/navigation';
-import { MDXRemote } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
+import { MDXRemote } from 'next-mdx-remote';
 import Navbar from '@/components/layout/Navbar';
-import Link from 'next/link';
-import { FaArrowLeft } from 'react-icons/fa';
-
-interface Article {
-  slug: string;
-  title: string;
-  date: string;
-  content: string;
-  description: string;
-}
 
 interface Props {
   params: {
@@ -25,7 +13,17 @@ export default async function ArticlePage({ params }: Props) {
   const article = await getArticleBySlug(params.slug);
 
   if (!article) {
-    notFound();
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900">Article not found</h1>
+            <p className="mt-2 text-gray-600">The article you're looking for doesn't exist.</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const mdxSource = await serialize(article.content);
@@ -33,44 +31,41 @@ export default async function ArticlePage({ params }: Props) {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <main className="container mx-auto px-4 py-8">
-        <Link
-          href="/articles"
-          className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6"
-        >
-          <FaArrowLeft className="mr-2" />
-          Back to Articles
-        </Link>
-
-        <article className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm p-6">
-          <header className="mb-8">
-            <h1 className="text-4xl font-bold mb-4">{article.title}</h1>
-            <div className="flex items-center text-gray-600">
-              <time dateTime={article.date}>
-                {new Date(article.date).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </time>
-            </div>
-          </header>
-          
-          <div className={styles.articleContent}>
-            <MDXRemote 
-              {...mdxSource}
-              components={{
-                div: ({ className, ...props }) => (
-                  <div className={`${styles[className || '']} ${className || ''}`} {...props} />
-                ),
-                span: ({ className, ...props }) => (
-                  <span className={`${styles[className || '']} ${className || ''}`} {...props} />
-                )
-              }}
-            />
+      <article className="container mx-auto px-4 py-8 max-w-4xl">
+        <header className="mb-8">
+          <h1 className="text-4xl font-bold mb-4">{article.title}</h1>
+          <div className="flex items-center gap-4">
+            <time className="text-gray-600" dateTime={article.date}>
+              {new Date(article.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </time>
+            {article.level && (
+              <span className={`px-2 py-1 rounded text-sm ${getLevelColor(article.level)}`}>
+                {article.level}
+              </span>
+            )}
           </div>
-        </article>
-      </main>
+        </header>
+        <div className="prose prose-lg max-w-none">
+          <MDXRemote {...mdxSource} />
+        </div>
+      </article>
     </div>
   );
+}
+
+function getLevelColor(level: string) {
+  switch (level) {
+    case 'beginner':
+      return 'bg-green-100 text-green-800';
+    case 'intermediate':
+      return 'bg-yellow-100 text-yellow-800';
+    case 'advanced':
+      return 'bg-red-100 text-red-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
 }
