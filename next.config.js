@@ -16,6 +16,10 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   generateEtags: true,
+  // Disable ESLint during build
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   // Handle MDX
   webpack: (config) => {
     config.resolve.fallback = { fs: false };

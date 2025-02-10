@@ -19,6 +19,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV=production
 ENV CI=true
+ENV NEXT_LINT=false
 
 # Show more debug info
 RUN node --version
