@@ -1,6 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import { serialize } from 'next-mdx-remote/serialize';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
 
 const articlesDirectory = path.join(process.cwd(), 'content/articles');
 
@@ -15,6 +18,19 @@ export interface ArticleMetadata {
 
 export interface Article extends ArticleMetadata {
   content: string;
+}
+
+export async function serializeMDX(content: string) {
+  const mdxSource = await serialize(content, {
+    parseFrontmatter: true,
+    mdxOptions: {
+      remarkPlugins: [remarkGfm],
+      rehypePlugins: [rehypeHighlight],
+      format: 'mdx',
+    },
+  });
+  
+  return mdxSource;
 }
 
 export function getAllArticles(): Article[] {

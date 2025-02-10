@@ -2,8 +2,7 @@ import 'server-only';
 import { promises as fs } from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { remark } from 'remark';
-import html from 'remark-html';
+import { serializeMDX } from './mdx';
 
 // This should be used in a Node.js context (Server Components, getStaticProps, etc.)
 const articlesDirectory = path.join(process.cwd(), 'content/articles');
@@ -11,10 +10,11 @@ const articlesDirectory = path.join(process.cwd(), 'content/articles');
 export interface Article {
   slug: string;
   title: string;
-  content: string;
+  content: any;
   type?: string;
   level?: string;
   topics?: string[];
+  mainImage?: string;
 }
 
 async function markdownToHtml(markdown: string) {
@@ -40,16 +40,17 @@ export async function getAllArticles(): Promise<Article[]> {
           // Use gray-matter to parse the post metadata section
           const { data, content } = matter(fileContents);
           
-          // Convert markdown to HTML
-          const contentHtml = await markdownToHtml(content);
+          // Serialize MDX content
+          const mdxSource = await serializeMDX(content);
           
           return {
             slug,
             title: data.title || 'Untitled',
-            content: contentHtml,
+            content: mdxSource,
             type: data.type,
             level: data.level,
             topics: data.topics,
+            mainImage: data.mainImage,
           };
         })
     );
@@ -70,16 +71,17 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
     // Use gray-matter to parse the post metadata section
     const { data, content } = matter(fileContents);
     
-    // Convert markdown to HTML
-    const contentHtml = await markdownToHtml(content);
+    // Serialize MDX content
+    const mdxSource = await serializeMDX(content);
     
     return {
       slug,
       title: data.title || 'Untitled',
-      content: contentHtml,
+      content: mdxSource,
       type: data.type,
       level: data.level,
       topics: data.topics,
+      mainImage: data.mainImage,
     };
   } catch (error) {
     console.error(`Error getting article by slug ${slug}:`, error);
@@ -94,7 +96,7 @@ export async function searchArticles(query: string): Promise<Article[]> {
   
   return articles.filter(article => 
     article.title.toLowerCase().includes(searchQuery) ||
-    article.content.toLowerCase().includes(searchQuery) ||
+    (typeof article.content === 'string' && article.content.toLowerCase().includes(searchQuery)) ||
     article.topics?.some(topic => topic.toLowerCase().includes(searchQuery))
   );
 }
