@@ -4,16 +4,7 @@ import { useState, useEffect } from 'react';
 import ArticleCard from '@/components/articles/ArticleCard';
 import { FaSearch } from 'react-icons/fa';
 import Navbar from '@/components/layout/Navbar';
-
-interface Article {
-  title: string;
-  content: string;
-  type?: string;
-  level?: string;
-  topics?: string[];
-  mainImage?: string | null;
-  slug: string;
-}
+import { type Article } from '@/lib/articles.server';
 
 export const dynamic = 'force-dynamic';
 
@@ -66,11 +57,11 @@ function ArticlesPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen bg-gray-50">
         <Navbar />
         <div className="container mx-auto px-4 py-8">
           <div className="text-center py-12">
-            <p className="text-red-500 dark:text-red-400">{error}</p>
+            <p className="text-red-500">{error}</p>
           </div>
         </div>
       </div>
@@ -78,10 +69,10 @@ function ArticlesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+        <h1 className="text-3xl font-bold text-center mb-12 text-gray-900">
           Arabic Language Articles
         </h1>
 
@@ -93,9 +84,9 @@ function ArticlesPage() {
             <input
               type="text"
               placeholder="Search articles by title, content, or topics..."
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
-                       bg-white dark:bg-gray-800 text-gray-900 dark:text-white
-                       focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 
+                       bg-white text-gray-900
+                       focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -108,7 +99,7 @@ function ArticlesPage() {
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
                 ${selectedLevel === 'all'
                   ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
             >
               All
@@ -118,7 +109,7 @@ function ArticlesPage() {
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
                 ${selectedLevel === 'beginner'
                   ? 'bg-green-600 text-white'
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
             >
               Beginner
@@ -128,7 +119,7 @@ function ArticlesPage() {
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
                 ${selectedLevel === 'intermediate'
                   ? 'bg-yellow-600 text-white'
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
             >
               Intermediate
@@ -138,7 +129,7 @@ function ArticlesPage() {
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
                 ${selectedLevel === 'advanced'
                   ? 'bg-red-600 text-white'
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
             >
               Advanced
@@ -150,13 +141,13 @@ function ArticlesPage() {
           {/* Beginner Articles */}
           {(selectedLevel === 'all' || selectedLevel === 'beginner') && filterArticles(beginnerArticles).length > 0 && (
             <section>
-              <h2 className="text-2xl font-semibold mb-8 text-center text-gray-800 dark:text-gray-200">
+              <h2 className="text-2xl font-semibold mb-8 text-center text-gray-800">
                 Beginner Articles
               </h2>
               <div className="max-w-5xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filterArticles(beginnerArticles).map((article) => (
-                    <ArticleCard key={article.slug} {...article} />
+                    <ArticleCard key={article.slug} article={article} />
                   ))}
                 </div>
               </div>
@@ -166,13 +157,13 @@ function ArticlesPage() {
           {/* Intermediate Articles */}
           {(selectedLevel === 'all' || selectedLevel === 'intermediate') && filterArticles(intermediateArticles).length > 0 && (
             <section>
-              <h2 className="text-2xl font-semibold mb-8 text-center text-gray-800 dark:text-gray-200">
+              <h2 className="text-2xl font-semibold mb-8 text-center text-gray-800">
                 Intermediate Articles
               </h2>
               <div className="max-w-5xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filterArticles(intermediateArticles).map((article) => (
-                    <ArticleCard key={article.slug} {...article} />
+                    <ArticleCard key={article.slug} article={article} />
                   ))}
                 </div>
               </div>
@@ -182,13 +173,13 @@ function ArticlesPage() {
           {/* Advanced Articles */}
           {(selectedLevel === 'all' || selectedLevel === 'advanced') && filterArticles(advancedArticles).length > 0 && (
             <section>
-              <h2 className="text-2xl font-semibold mb-8 text-center text-gray-800 dark:text-gray-200">
+              <h2 className="text-2xl font-semibold mb-8 text-center text-gray-800">
                 Advanced Articles
               </h2>
               <div className="max-w-5xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filterArticles(advancedArticles).map((article) => (
-                    <ArticleCard key={article.slug} {...article} />
+                    <ArticleCard key={article.slug} article={article} />
                   ))}
                 </div>
               </div>
@@ -198,13 +189,13 @@ function ArticlesPage() {
           {/* Other Articles (without level) */}
           {selectedLevel === 'all' && filterArticles(unspecifiedLevelArticles).length > 0 && (
             <section>
-              <h2 className="text-2xl font-semibold mb-8 text-center text-gray-800 dark:text-gray-200">
+              <h2 className="text-2xl font-semibold mb-8 text-center text-gray-800">
                 Other Articles
               </h2>
               <div className="max-w-5xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filterArticles(unspecifiedLevelArticles).map((article) => (
-                    <ArticleCard key={article.slug} {...article} />
+                    <ArticleCard key={article.slug} article={article} />
                   ))}
                 </div>
               </div>
@@ -212,9 +203,16 @@ function ArticlesPage() {
           )}
 
           {/* No Results Message */}
-          {filterArticles(articles).length === 0 && (
+          {articles.length > 0 && !filterArticles(articles).length && (
             <div className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400">No articles found matching your criteria.</p>
+              <p className="text-gray-600">No articles found matching your criteria.</p>
+            </div>
+          )}
+
+          {/* Loading State */}
+          {isLoading && (
+            <div className="text-center py-12">
+              <p className="text-gray-600">Loading articles...</p>
             </div>
           )}
         </div>
