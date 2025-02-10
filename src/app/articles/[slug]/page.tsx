@@ -5,7 +5,8 @@ import { useParams } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
 import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
-import './styles.css';
+import styles from '@/styles/articles.module.css';
+import { MDXRemote } from 'next-mdx-remote/rsc';
 
 interface Article {
   slug: string;
@@ -121,9 +122,20 @@ export default function ArticlePage() {
           </div>
           
           <div 
-            className="mt-8 article-content"
-            dangerouslySetInnerHTML={{ __html: article.content }} 
-          />
+            className={styles.articleContent}
+          >
+            <MDXRemote 
+              source={article.content} 
+              components={{
+                div: ({ className, ...props }) => (
+                  <div className={`${styles[className || '']} ${className || ''}`} {...props} />
+                ),
+                span: ({ className, ...props }) => (
+                  <span className={`${styles[className || '']} ${className || ''}`} {...props} />
+                )
+              }}
+            />
+          </div>
         </article>
       </main>
     </div>
