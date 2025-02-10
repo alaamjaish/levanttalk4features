@@ -1,131 +1,65 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { getArticleBySlug } from '@/lib/articles.server';
+import styles from '@/styles/articles.module.css';
+import { notFound } from 'next/navigation';
+import { MDXRemote } from 'next-mdx-remote';
+import { serialize } from 'next-mdx-remote/serialize';
 import Navbar from '@/components/layout/Navbar';
 import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
-import styles from '@/styles/articles.module.css';
-import { MDXRemote } from 'next-mdx-remote/rsc';
 
 interface Article {
   slug: string;
   title: string;
+  date: string;
   content: string;
-  type?: string;
-  level?: string;
-  topics?: string[];
+  description: string;
 }
 
-export default function ArticlePage() {
-  const params = useParams();
-  const [article, setArticle] = useState<Article | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface Props {
+  params: {
+    slug: string;
+  };
+}
 
-  useEffect(() => {
-    async function loadArticle() {
-      if (!params.slug) return;
+export default async function ArticlePage({ params }: Props) {
+  const article = await getArticleBySlug(params.slug);
 
-      try {
-        setIsLoading(true);
-        setError(null);
-        const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
-        const response = await fetch(`/api/articles/${slug}`);
-        
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError('Article not found');
-          } else {
-            setError('Failed to load article');
-          }
-          return;
-        }
-
-        const articleData = await response.json();
-        setArticle(articleData);
-      } catch (error) {
-        console.error('Error loading article:', error);
-        setError('Failed to load article. Please try again later.');
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadArticle();
-  }, [params.slug]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <Navbar />
-        <main className="container mx-auto px-4 py-8">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-2"></div>
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-4"></div>
-          </div>
-        </main>
-      </div>
-    );
+  if (!article) {
+    notFound();
   }
 
-  if (error || !article) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <Navbar />
-        <main className="container mx-auto px-4 py-8">
-          <Link
-            href="/articles"
-            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline mb-6"
-          >
-            <FaArrowLeft className="mr-2" /> Back to Articles
-          </Link>
-          <div className="text-center py-12">
-            <h1 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">
-              {error || 'Article not found'}
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Please try again later or go back to browse other articles.
-            </p>
-          </div>
-        </main>
-      </div>
-    );
-  }
+  const mdxSource = await serialize(article.content);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar />
-      <main className="container mx-auto px-4 py-8 max-w-3xl">
+      <main className="container mx-auto px-4 py-8">
         <Link
           href="/articles"
           className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline mb-6"
         >
           <FaArrowLeft className="mr-2" /> Back to Articles
         </Link>
-        
-        <article className="prose dark:prose-invert lg:prose-lg mx-auto">
-          <h1 className="mb-4 text-3xl font-bold">{article.title}</h1>
+
+        <article className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+          <header className="mb-8">
+            <h1 className="text-4xl font-bold mb-4">{article.title}</h1>
+            <div className="flex items-center text-gray-600 dark:text-gray-400">
+              <time dateTime={article.date}>
+                {new Date(article.date).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </time>
+            </div>
+          </header>
           
-          <div className="flex gap-2 mb-6">
-            {article.type && (
-              <span className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm px-3 py-1 rounded-full">
-                {article.type}
-              </span>
-            )}
-            
-            {article.level && (
-              <span className="inline-block bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-sm px-3 py-1 rounded-full">
-                {article.level}
-              </span>
-            )}
-          </div>
-          
-          <div 
-            className={styles.articleContent}
-          >
+          <div className={styles.articleContent}>
             <MDXRemote 
-              source={article.content} 
+              {...mdxSource}
               components={{
                 div: ({ className, ...props }) => (
                   <div className={`${styles[className || '']} ${className || ''}`} {...props} />
