@@ -11,6 +11,16 @@ const nextConfig = {
   experimental: {
     mdxRs: true,
   },
+  // Optimize for production
+  reactStrictMode: true,
+  poweredByHeader: false,
+  compress: true,
+  generateEtags: true,
+  // Handle MDX
+  webpack: (config, { isServer }) => {
+    config.resolve.fallback = { fs: false };
+    return config;
+  },
 }
 
 module.exports = withMDX(nextConfig)
