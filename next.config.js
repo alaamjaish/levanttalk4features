@@ -17,7 +17,7 @@ const nextConfig = {
   compress: true,
   generateEtags: true,
   // Handle MDX
-  webpack: (config, { isServer }) => {
+  webpack: (config) => {
     config.resolve.fallback = { fs: false };
     return config;
   },
