@@ -11,6 +11,7 @@ export interface Article {
   content: string;
   description: string;
   topics?: string[];
+  level?: 'beginner' | 'intermediate' | 'advanced';
 }
 
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
@@ -26,6 +27,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
       date: data.date,
       description: data.description,
       topics: data.topics,
+      level: data.level,
     };
   } catch (error) {
     console.error(`Error loading article ${slug}:`, error);
@@ -52,6 +54,7 @@ export async function getAllArticles(): Promise<Article[]> {
             description: data.description,
             content,
             topics: data.topics,
+            level: data.level,
           };
         })
     );
